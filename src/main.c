@@ -5,11 +5,68 @@
 #include <sys/types.h>
 #include <sys/utime.h>
 
-
 //MARK: defintions
 #define LSH_RL_BUFSIZE 1024
 #define LSH_TOK_BUFSIZE 64
 #define LSH_TOK_DELIM " \t\r\n\a"
+
+/*
+    MARK: Function Declarations for builtin shell commands
+*/
+int lsh_cd(char **args);
+int lsh_help(char **args);
+int lsh_exit(char **args);
+
+/*
+    List of builtin commands, followed by their corresponding functions
+*/
+char *builtin_str[] = { //array of builtin command names (array of function pointers)
+    "cd",
+    "help",
+    "exit"
+};
+
+int lsh_num_builtins() {
+    return sizeof(builtin_str) / sizeof(char *);
+}
+
+/*
+    Builtin function implementations
+*/
+int lsh_cd(char **args) {
+    if (args[1] == NULL) {
+        fprintf(stderr, "lsh: expected argument to \"cd\"\n");
+    } else {
+        if (chdir(args[1]) != 0) {
+            //perror function used to print human-readable error message
+            //corresponging to the current value of the global variable errno
+            //useful for debugging system or library call failures
+            perror("lsh");
+        }
+    }
+    return 1;
+}
+
+int lsh_help(char **args) {
+    int i;
+    printf("S.B's LSH\n");
+    printf("Type program names and arguments, and hit enter.\n");
+    printf("The following are built in:\n");
+
+    for (i = 0; i < lsh_num_builtins(); ++i) {
+        printf("    %s\n", builtin_str[i]);
+    }
+
+    printf("Use the main command for information on other programs.\n");
+    return 1;
+}
+
+int lsh_exit(char **args) {
+    return 0;
+}
+
+
+
 
 //MARK: Launching a program
 //parameter takes a list of pointer arguments
