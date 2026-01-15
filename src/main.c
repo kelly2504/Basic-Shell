@@ -73,6 +73,7 @@ char **lsh_split_line(char *line) {
 
         if (position >= bufsize) {
             bufsize += LSH_TOK_BUFSIZE;
+            //reallocate array of pointers if necessary
             tokens = realloc(tokens, bufsize * sizeof(char*));
             if (!tokens) {
                 fprintf(stderr, "lsh: allocation error\n");
@@ -81,6 +82,7 @@ char **lsh_split_line(char *line) {
         }
         token = strtok(NULL, LSH_TOK_DELIM);
     }
+    //null-terminate list of tokens
     tokens[position] = NULL;
     return tokens;
 }
